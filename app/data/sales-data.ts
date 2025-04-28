@@ -1,60 +1,88 @@
 // app/data/sales-data.ts
 import { fetchAllPayments } from '../services/payment-service';
 
+// Define types for payment and chart data
+interface Payment {
+  timestamp: string;
+  amount: number | string;
+}
+
+interface DayData {
+  day: string;
+  sales: number;
+}
+
+interface MonthData {
+  month: string;
+  sales: number;
+}
+
 // Helper function to group payments by day of week
-const groupByDayOfWeek = (payments: any[]) => {
+const groupByDayOfWeek = (payments: Payment[]): DayData[] => {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const result = days.map(day => ({ day, sales: 0 }));
-
+  
   payments.forEach(payment => {
     const date = new Date(payment.timestamp);
     const dayIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
-
+    
     // Check if payment.amount is a string and parse accordingly
     if (typeof payment.amount === 'string') {
       // Split the string into individual numbers
       const amounts = payment.amount.match(/[\d.]+/g);
       if (amounts) {
-        const total = amounts.reduce((sum, val) => sum + parseFloat(val), 0);
+        const total = amounts.reduce((sum: number, val: string) => sum + parseFloat(val), 0);
         result[dayIndex].sales += total;
       }
     } else if (typeof payment.amount === 'number') {
       result[dayIndex].sales += payment.amount;
     }
   });
-
+  
   return result;
 };
+
 // Helper function to group payments by month
-const groupByMonth = (payments: any[]) => {
+const groupByMonth = (payments: Payment[]): MonthData[] => {
   const months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
+  
   const result = months.map(month => ({ month, sales: 0 }));
-
+  
   payments.forEach(payment => {
     const date = new Date(payment.timestamp);
     const monthIndex = date.getMonth(); // 0 (Jan) to 11 (Dec)
-    result[monthIndex].sales += payment.amount;
+    
+    // Handle both string and number amount types
+    if (typeof payment.amount === 'string') {
+      const amounts = payment.amount.match(/[\d.]+/g);
+      if (amounts) {
+        const total = amounts.reduce((sum: number, val: string) => sum + parseFloat(val), 0);
+        result[monthIndex].sales += total;
+      }
+    } else {
+      result[monthIndex].sales += payment.amount;
+    }
   });
-
+  
   return result;
 };
 
 // Fetch and transform payment data
-export const getWeeklySalesData = async () => {
+export const getWeeklySalesData = async (): Promise<DayData[]> => {
   const payments = await fetchAllPayments();
   return groupByDayOfWeek(payments);
 };
 
-export const getMonthlySalesData = async () => {
+export const getMonthlySalesData = async (): Promise<MonthData[]> => {
   const payments = await fetchAllPayments();
   return groupByMonth(payments);
 };
 
 // Fallback static data (optional)
-export const staticWeeklySalesData = [
+export const staticWeeklySalesData: DayData[] = [
   { day: "Mon", sales: 400 },
   { day: "Tue", sales: 300 },
   { day: "Wed", sales: 500 },
@@ -64,7 +92,7 @@ export const staticWeeklySalesData = [
   { day: "Sun", sales: 300 },
 ];
 
-export const staticMonthlySalesData = [
+export const staticMonthlySalesData: MonthData[] = [
   { month: "Jan", sales: 4000 },
   { month: "Feb", sales: 3000 },
   { month: "Mar", sales: 5000 },

@@ -27,7 +27,7 @@ export const CustomBarChart = ({
         <YAxis
           tickFormatter={(value) => new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'KES',
             maximumFractionDigits: 0
           }).format(value)}
         />
@@ -35,7 +35,7 @@ export const CustomBarChart = ({
           formatter={(value) => [
             new Intl.NumberFormat('en-US', {
               style: 'currency',
-              currency: 'USD'
+              currency: 'KES'
             }).format(Number(value)),
             'Sales'
           ]}
