@@ -1,8 +1,11 @@
-// app/api/payments/route.ts
-
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic'; // Ensure dynamic route
+export const dynamic = 'force-dynamic';
+
+interface Payment {
+  timestamp?: string;
+  [key: string]: unknown;
+}
 
 export async function GET() {
   try {
@@ -19,12 +22,12 @@ export async function GET() {
 
     const data = await response.json();
 
-    const sanitizedData = data.filter((payment: any) => {
+    const sanitizedData = (data as Payment[]).filter((payment) => {
       if (!payment.timestamp) {
         console.warn('Missing timestamp, skipping payment:', payment);
         return false;
       }
-    
+
       const date = new Date(payment.timestamp);
       const isValid = !isNaN(date.getTime());
       if (!isValid) {

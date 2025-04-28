@@ -192,8 +192,8 @@ export default function DashboardPage() {
             {/* Today's Revenue Card */}
             <Card className="bg-white shadow-md border-[#A7C7E7] border-t-4 dark:bg-[#1E293B] dark:border-[#4B6584]">
               <CardHeader className="pb-2">
-                <CardTitle className="text-xl font-medium">Today's Milk Revenue</CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">Total revenue earned today</CardDescription>
+              <CardTitle className="text-xl font-medium">Today&apos;s Milk Revenue</CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">Total revenue earned today</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
