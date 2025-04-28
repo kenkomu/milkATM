@@ -1,7 +1,8 @@
+// /home/ken/Projects/milkatm/components/barchart.tsx
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 interface BarChartProps {
-  data: { day: string; sales: number }[];  // Ensure this is the correct type
+  data: any[];
   xAxisKey: string;
   barKey: string;
   barColor?: string;

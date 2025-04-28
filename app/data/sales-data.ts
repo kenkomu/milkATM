@@ -9,12 +9,22 @@ const groupByDayOfWeek = (payments: any[]) => {
   payments.forEach(payment => {
     const date = new Date(payment.timestamp);
     const dayIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
-    result[dayIndex].sales += payment.amount;
+
+    // Check if payment.amount is a string and parse accordingly
+    if (typeof payment.amount === 'string') {
+      // Split the string into individual numbers
+      const amounts = payment.amount.match(/[\d.]+/g);
+      if (amounts) {
+        const total = amounts.reduce((sum, val) => sum + parseFloat(val), 0);
+        result[dayIndex].sales += total;
+      }
+    } else if (typeof payment.amount === 'number') {
+      result[dayIndex].sales += payment.amount;
+    }
   });
 
   return result;
 };
-
 // Helper function to group payments by month
 const groupByMonth = (payments: any[]) => {
   const months = [

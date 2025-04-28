@@ -12,6 +12,13 @@ import { fetchAllPayments } from "@/app/services/payment-service"
 import { transformPaymentsToWeeklyData, transformPaymentsToMonthlyData } from "@/app/utils/transform-payments"
 import { staticMonthlySalesData, staticWeeklySalesData } from "../data/sales-data"
 
+// Helper function to ensure values are numbers
+function ensureNumber(value: any): number {
+  if (value === null || value === undefined) return 0;
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
@@ -29,35 +36,43 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
 
         // Fetch payments data
-        const payments = await fetchAllPayments();
+        const payments = await fetchAllPayments()
 
         // Calculate today's revenue
-        const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0]  // Get today's date in YYYY-MM-DD format
         const todayPayments = payments.filter(payment =>
           new Date(payment.timestamp).toISOString().split('T')[0] === today  // Compare timestamps
-        );
+        )
 
-        // Sum up the amount for today's payments
-        const todayTotal = todayPayments.reduce((sum, payment) => sum + parseFloat(payment.amount), 0);
-        setTodayRevenue(todayTotal);
+        // Calculate today's revenue with proper number handling
+        const todayTotal = todayPayments.reduce((sum, payment) => {
+          return sum + ensureNumber(payment.amount)
+        }, 0)
+        
+        // Format to 2 decimal places for display
+        setTodayRevenue(Number(todayTotal.toFixed(2)))
 
-        // Transform the payments data for weekly and monthly charts
-        const weeklyDataTransformed = transformPaymentsToWeeklyData(payments);
-        const monthlyDataTransformed = transformPaymentsToMonthlyData(payments);
+        // Transform payments to weekly and monthly data
+        const weeklySalesData = transformPaymentsToWeeklyData(payments)
+        const monthlySalesData = transformPaymentsToMonthlyData(payments)
 
-        // Set the transformed data into the state
-        setWeeklyData(weeklyDataTransformed);  // { day: string; sales: number }[]
-        setMonthlyData(monthlyDataTransformed);  // { month: string; sales: number }[]
+        // Log the transformed data for weekly and monthly sales
+        console.log("Weekly Data for Line Graph:", weeklySalesData)
+        console.log("Monthly Data for Line Graph:", monthlySalesData)
+
+        // Set the data for the chart
+        setWeeklyData(weeklySalesData)
+        setMonthlyData(monthlySalesData)
 
       } catch (error) {
-        console.error("Error fetching payment data:", error);
+        console.error('Error fetching data:', error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     fetchData()
   }, [router])
@@ -98,7 +113,7 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="flex items-center">
                   <DollarSign className="h-10 w-10 text-primary mr-3" />
-                  <span className="text-4xl font-bold">${todayRevenue}</span>
+                  <span className="text-4xl font-bold">${todayRevenue.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -115,6 +130,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <div className="p-4 border rounded-lg">
                   <h2 className="text-xl font-semibold mb-4">Weekly Sales</h2>
+
                   <CustomLineChart
                     data={weeklyData}
                     xAxisKey="day"
