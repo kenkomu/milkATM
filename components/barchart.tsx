@@ -2,7 +2,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 interface BarChartProps {
-  data: any[];
+  data: { month: string; sales: number }[]; // Use your actual type here
   xAxisKey: string;
   barKey: string;
   barColor?: string;

@@ -2,13 +2,14 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface LineChartProps {
-  width?: number | string;
-  height?: number | string;
-  data: any[];
+  data: { day: string; sales: number }[]; // Adjust to your data shape
   xAxisKey: string;
   dataKey: string;
+  width?: number | string;
+  height?: number | string;
   color?: string;
 }
+
 
 export const CustomLineChart = ({ 
   width = '100%', 

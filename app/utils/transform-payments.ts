@@ -7,7 +7,7 @@ interface Payment {
 }
 
 // Helper function to ensure a value is a number
-function ensureNumber(value: any): number {
+function ensureNumber(value: unknown): number {
   if (value === null || value === undefined) return 0;
   const num = Number(value);
   return isNaN(num) ? 0 : num;

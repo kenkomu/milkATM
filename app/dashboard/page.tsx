@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { BarChart as BarChartIcon, Milk, DollarSign, TrendingUp, RefreshCw, Moon, Sun } from "lucide-react"
+import { BarChart as BarChartIcon, Milk, TrendingUp, RefreshCw, Moon, Sun } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -14,11 +14,14 @@ import { staticMonthlySalesData, staticWeeklySalesData } from "../data/sales-dat
 import { useTheme } from "@/components/theme-provider"
 
 // Helper function to ensure values are numbers
-function ensureNumber(value: any): number {
+
+
+function ensureNumber(value: unknown): number {
   if (value === null || value === undefined) return 0;
   const num = Number(value);
   return isNaN(num) ? 0 : num;
 }
+
 
 // Theme toggle component
 function ThemeToggle() {
